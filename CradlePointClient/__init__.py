@@ -32,7 +32,7 @@ class Client:
             raise AttributeError('The X-CP-API-ID, X-CP-API-KEY, X-ECM-API-ID and X-ECM-API-KEY are all required!')
 
     def get(self, method=str(), **kwargs):
-        response = requests.get(f'{self.base_url}/{method.split("/")}', headers=self.headers,
+        response = requests.get(f'{self.base_url}/{method.strip("/")}', headers=self.headers,
                                 verify=self.verify, params=kwargs)
         if response.status_code in [200]:
             return response.json()
@@ -40,7 +40,7 @@ class Client:
             raise CradlePointError(response.status_code)
 
     def add(self, method: str, data: dict) -> dict:
-        response = requests.post(f'{self.base_url}/{method.split("/")}', headers=self.headers,
+        response = requests.post(f'{self.base_url}/{method.strip("/")}', headers=self.headers,
                                  verify=self.verify, json=data)
         if response.status_code in [200]:
             return response.json()
@@ -48,7 +48,7 @@ class Client:
             raise CradlePointError(response.status_code)
 
     def update(self, method: str, data: dict) -> dict:
-        response = requests.put(f'{self.base_url}/{method.split("/")}', headers=self.headers,
+        response = requests.put(f'{self.base_url}/{method.strip("/")}', headers=self.headers,
                                 verify=self.verify, json=data)
         if response.status_code in [200]:
             return response.json()
@@ -56,7 +56,7 @@ class Client:
             raise CradlePointError(response.status_code)
 
     def delete(self, method: str) -> dict:
-        response = requests.delete(f'{self.base_url}/{method.split("/")}', headers=self.headers, verify=self.verify)
+        response = requests.delete(f'{self.base_url}/{method.strip("/")}', headers=self.headers, verify=self.verify)
         if response.status_code in [200]:
             return response.json()
         else:
