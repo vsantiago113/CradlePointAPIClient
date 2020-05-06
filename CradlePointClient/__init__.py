@@ -11,7 +11,8 @@ class CradlePointAuthError(Exception):
 
 
 class Client:
-    def __init__(self, verify=True, x_cp_api_id=None, x_cp_api_key=None, x_ecm_api_id=None, x_ecm_api_key=None):
+    def __init__(self, verify=True, api_version='v2', x_cp_api_id=None, x_cp_api_key=None, 
+                 x_ecm_api_id=None, x_ecm_api_key=None):
         self.verify = bool(verify)
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -27,7 +28,7 @@ class Client:
             }
 
             self.headers = headers
-            self.base_url = 'https://www.cradlepointecm.com/api/v2'
+            self.base_url = f'https://www.cradlepointecm.com/api/{api_version}'
         else:
             raise AttributeError('The X-CP-API-ID, X-CP-API-KEY, X-ECM-API-ID and X-ECM-API-KEY are all required!')
 
