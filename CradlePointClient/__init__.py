@@ -32,33 +32,34 @@ class Client:
         else:
             raise AttributeError('The X-CP-API-ID, X-CP-API-KEY, X-ECM-API-ID and X-ECM-API-KEY are all required!')
 
-    def get(self, method=str(), **kwargs):
-        response = requests.get(f'{self.base_url}/{method.strip("/")}', headers=self.headers,
-                                verify=self.verify, params=kwargs)
-        if response.status_code in [200]:
+    def get(self, url=None, method='', **kwargs):
+        url = f'{self.base_url}/{method.strip("/")}' if url is None else url
+        response = requests.get(url, headers=self.headers, verify=self.verify, params=kwargs)
+        if response.status_code in [200, 202]:
             return response.json()
         else:
             raise CradlePointError(response.status_code)
 
-    def add(self, method: str, data: dict) -> dict:
-        response = requests.post(f'{self.base_url}/{method.strip("/")}', headers=self.headers,
-                                 verify=self.verify, json=data)
-        if response.status_code in [200]:
+    def add(self, url=None, method='', data=None) -> dict:
+        url = f'{self.base_url}/{method.strip("/")}' if url is None else url
+        response = requests.post(url, headers=self.headers, verify=self.verify, json=data)
+        if response.status_code in [200, 202]:
             return response.json()
         else:
             raise CradlePointError(response.status_code)
 
-    def update(self, method: str, data: dict) -> dict:
-        response = requests.put(f'{self.base_url}/{method.strip("/")}', headers=self.headers,
-                                verify=self.verify, json=data)
-        if response.status_code in [200]:
+    def update(self, url=None, method='', data=None) -> dict:
+        url = f'{self.base_url}/{method.strip("/")}' if url is None else url
+        response = requests.put(url, headers=self.headers, verify=self.verify, json=data)
+        if response.status_code in [200, 202]:
             return response.json()
         else:
             raise CradlePointError(response.status_code)
 
-    def delete(self, method: str) -> dict:
-        response = requests.delete(f'{self.base_url}/{method.strip("/")}', headers=self.headers, verify=self.verify)
-        if response.status_code in [200]:
+    def delete(self, url=None, method='') -> dict:
+        url = f'{self.base_url}/{method.strip("/")}' if url is None else url
+        response = requests.delete(url, headers=self.headers, verify=self.verify)
+        if response.status_code in [200, 202]:
             return response.json()
         else:
             raise CradlePointError(response.status_code)
