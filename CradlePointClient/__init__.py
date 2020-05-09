@@ -10,12 +10,18 @@ class CradlePointAuthError(Exception):
     pass
 
 
-class Client:
-    def __init__(self, verify=True, api_version='v2', x_cp_api_id=None, x_cp_api_key=None, 
-                 x_ecm_api_id=None, x_ecm_api_key=None):
+class APIClient:
+    def __init__(self, verify=True, warnings=False, api_version='v2'):
         self.verify = bool(verify)
-        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        self.api_version = api_version
+        if warnings is False:
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+        self.headers = {'Content-Type': 'application/json'}
+        self.token = None
+        self.base_uri = None
+
+    def connect(self, x_cp_api_id=None, x_cp_api_key=None, x_ecm_api_id=None, x_ecm_api_key=None):
         check_headers = {x_cp_api_id, x_cp_api_key, x_ecm_api_id, x_ecm_api_key}
 
         if None not in check_headers:
@@ -28,38 +34,25 @@ class Client:
             }
 
             self.headers = headers
-            self.base_url = f'https://www.cradlepointecm.com/api/{api_version}'
+            self.base_uri = f'https://www.cradlepointecm.com/api/{self.api_version}'
         else:
             raise AttributeError('The X-CP-API-ID, X-CP-API-KEY, X-ECM-API-ID and X-ECM-API-KEY are all required!')
 
+    def disconnect(self):
+        pass
+
     def get(self, url=None, method='', **kwargs):
-        url = f'{self.base_url}/{method.strip("/")}' if url is None else url
-        response = requests.get(url, headers=self.headers, verify=self.verify, params=kwargs)
-        if response.status_code in [200, 202]:
-            return response.json()
-        else:
-            raise CradlePointError(response.status_code)
+        url = f'{self.base_uri}/{method.strip("/")}' if url is None else url
+        return requests.get(url, headers=self.headers, verify=self.verify, params=kwargs)
 
-    def add(self, url=None, method='', data=None) -> dict:
-        url = f'{self.base_url}/{method.strip("/")}' if url is None else url
-        response = requests.post(url, headers=self.headers, verify=self.verify, json=data)
-        if response.status_code in [200, 202]:
-            return response.json()
-        else:
-            raise CradlePointError(response.status_code)
+    def post(self, url=None, method='', data=None):
+        url = f'{self.base_uri}/{method.strip("/")}' if url is None else url
+        return requests.post(url, headers=self.headers, verify=self.verify, json=data)
 
-    def update(self, url=None, method='', data=None) -> dict:
-        url = f'{self.base_url}/{method.strip("/")}' if url is None else url
-        response = requests.put(url, headers=self.headers, verify=self.verify, json=data)
-        if response.status_code in [200, 202]:
-            return response.json()
-        else:
-            raise CradlePointError(response.status_code)
+    def put(self, url=None, method='', data=None):
+        url = f'{self.base_uri}/{method.strip("/")}' if url is None else url
+        return requests.put(url, headers=self.headers, verify=self.verify, json=data)
 
-    def delete(self, url=None, method='') -> dict:
-        url = f'{self.base_url}/{method.strip("/")}' if url is None else url
-        response = requests.delete(url, headers=self.headers, verify=self.verify)
-        if response.status_code in [200, 202]:
-            return response.json()
-        else:
-            raise CradlePointError(response.status_code)
+    def delete(self, url=None, method=''):
+        url = f'{self.base_uri}/{method.strip("/")}' if url is None else url
+        return requests.delete(url, headers=self.headers, verify=self.verify)
