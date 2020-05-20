@@ -17,19 +17,18 @@ $ pip install CradlepointAPIClient
 ```
 
 ## Usage
-the argument "method" must be specify every time. Look at authentication validation for an example.
+the argument "method" must be specify every time.
 
 #### Default arguments and attributes
 ```python
 import CradlepointAPIClient
 
-client = CradlepointAPIClient.Client(verify=False, warnings=False, api_version='v1')
+client = CradlepointAPIClient.Client(api_version='v2', verify=True)
 
-client.get(url=None, method='', data=None, auth = None)
+client.get(method='', data=None)
 
 # client.headers
 # client.url_base
-# client.token
 
 ```
 
@@ -38,56 +37,10 @@ client.get(url=None, method='', data=None, auth = None)
 import CradlepointAPIClient
 import json
 
-client = CradlepointAPIClient.Client()
-client.connect(url='https://Cradlepoint-server.local', username='admin', password='Admin123')
+client = CradlepointAPIClient.Client(api_version='v2', verify=True)
+client.connect(x_cp_api_id='', x_cp_api_key='', x_ecm_api_id='', x_ecm_api_key='')
 
-response = client.get(method='/data/Alarms.json')
-print(json.dumps(response.json(), indent=4))
-
-client.disconnect()
-```
-
-#### Getting detailed information
-```python
-import CradlepointAPIClient
-import json
-
-client = CradlepointAPIClient.Client()
-client.connect(url='https://Cradlepoint-server.local', username='admin', password='Admin123')
-
-query_string = {'.full': 'true'}
-response = client.get(method='/data/Alarms.json', **query_string)
-print(json.dumps(response.json(), indent=4))
-
-client.disconnect()
-```
-
-#### Sorting
-```python
-import CradlepointAPIClient
-import json
-
-client = CradlepointAPIClient.Client()
-client.connect(url='https://Cradlepoint-server.local', username='admin', password='Admin123')
-
-query_string = {'.full': 'true', '.sort': 'severity'}
-response = client.get(method='/data/Alarms.json', **query_string)
-print(json.dumps(response.json(), indent=4))
-
-client.disconnect()
-```
-
-#### Filtering
-```python
-import CradlepointAPIClient
-import json
-
-client = CradlepointAPIClient.Client()
-client.connect(url='https://Cradlepoint-server.local', username='admin', password='Admin123')
-
-query_string = {'.full': 'true', '.sort': 'severity', 'category.value': 'AP',
-                    'message': 'contains("interface")'}
-response = client.get(method='/data/Alarms.json', **query_string)
+response = client.get(method='/groups')
 print(json.dumps(response.json(), indent=4))
 
 client.disconnect()
@@ -98,12 +51,38 @@ client.disconnect()
 import CradlepointAPIClient
 import json
 
-client = CradlepointAPIClient.Client()
-client.connect(url='https://Cradlepoint-server.local', username='admin', password='Admin123')
+client = CradlepointAPIClient.Client(api_version='v2', verify=True)
+client.connect(x_cp_api_id='', x_cp_api_key='', x_ecm_api_id='', x_ecm_api_key='')
 
-query_string = {'.full': 'true', '.sort': 'severity', 'category.value': 'AP',
-                    'message': 'contains("interface")', '.maxResults': '5'}
-response = client.get(method='/data/Alarms.json', **query_string)
+response = client.get(method='/groups', offset=0, limit=1)
+print(json.dumps(response.json(), indent=4))
+
+client.disconnect()
+```
+
+#### Fields
+```python
+import CradlepointAPIClient
+import json
+
+client = CradlepointAPIClient.Client(api_version='v2', verify=True)
+client.connect(x_cp_api_id='', x_cp_api_key='', x_ecm_api_id='', x_ecm_api_key='')
+
+response = client.get(method='/groups', offset=0, limit=1, fields='id,name')
+print(json.dumps(response.json(), indent=4))
+
+client.disconnect()
+```
+
+#### Filtering
+```python
+import CradlepointAPIClient
+import json
+
+client = CradlepointAPIClient.Client(api_version='v2', verify=True)
+client.connect(x_cp_api_id='', x_cp_api_key='', x_ecm_api_id='', x_ecm_api_key='')
+
+response = client.get(method='/groups', offset=0, limit=1, fields='id,name', name='test_group')
 print(json.dumps(response.json(), indent=4))
 
 client.disconnect()

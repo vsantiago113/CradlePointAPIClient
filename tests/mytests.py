@@ -3,21 +3,18 @@ import unittest
 import os
 import json
 
-url = 'https://Cradlepoint-server.local'
 username = os.environ.get('USERNAME')
 password = os.environ.get('PASSWORD')
 
 
 def run_full_test():
-    client = CradlepointAPIClient.Client(api_version='v3')
+    client = CradlepointAPIClient.Client(api_version='v2', verify=True)
 
     print(f'***** Testing: Login '.ljust(60, '*'))
-    client.connect(url, username, password)
+    client.connect(x_cp_api_id='', x_cp_api_key='', x_ecm_api_id='', x_ecm_api_key='')
 
     print(f'***** Testing: GET method '.ljust(60, '*'))
-    query_string = {'.full': 'true', '.sort': 'severity', 'category.value': 'AP',
-                    'message': 'contains("interface")', '.maxResults': '5'}
-    response = client.get(method='/data/Alarms.json', **query_string)
+    response = client.get(method='/groups', offset=0, limit=1)
     print(json.dumps(response.json(), indent=4))
 
     print(f'***** Testing: Logout '.ljust(60, '*'))
@@ -26,21 +23,11 @@ def run_full_test():
 
 class TestCradlepointAPIWrapper(unittest.TestCase):
 
-    def test_authentication(self):
-        client = CradlepointAPIClient.Client(api_version='v3')
+    def test_methods_get(self):
+        client = CradlepointAPIClient.Client(api_version='v2')
+        client.connect(x_cp_api_id='', x_cp_api_key='', x_ecm_api_id='', x_ecm_api_key='')
 
-        client.connect(url, username, password)
-        self.assertIsInstance(client.token, bytes)
-
-        client.disconnect()
-        self.assertEqual(client.token, None)
-
-    def test_methods_get_put_post_delete(self):
-        client = CradlepointAPIClient.Client(api_version='v3')
-
-        client.connect(url, username, password)
-
-        response = client.get(method='/data/Alarms.json')
+        response = client.get(method='/groups', offset=0, limit=1)
         self.assertEqual(response.status_code, 200)
 
         client.disconnect()
